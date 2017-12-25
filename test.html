@@ -1,0 +1,148 @@
+<html>
+<head>
+  <link rel="stylesheet" href="test.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="p-3 mb-2 bg-primary text-white">
+<h3 class="display-3">Quiz Using Javascript </h2><span align="right"><h4 id="timer"></h4></span>
+</div>
+<div id=intern_container>
+	    <div id="intern_question"><h2 class="display-3" id="ques"></h2></div>
+        <div id='intern_question'><form id="myQuiz">
+            <p id= a0></p> 
+            <p id= a1></p>
+            <p id= a2></p>
+            <p id= a3></p>
+        </form></div>
+    <div id="nextbutton" ><input id="back" type="button" name="backbutton" class="btn btn-info" value="Previous Question" onclick="updatePrevious();">   <input id="next" type="button" name="nextbutton" class="btn btn-info" value="Next Question" onclick="updateNext();"></div>
+</div>
+    </script>
+    
+    <script>
+
+//array of questions
+var allQuestions = [
+    {question: "Hello ", choices: ["World", "Town", "City", "Me"], correctAnswer: 0},
+    {question: "1+1?", choices: ["4", "3", "5", "2"], correctAnswer: 3},
+    {question: "I like ", choices: ["trains", "cats", "dogs", "food"], correctAnswer: 0},
+    {question: "Capital of India ", choices: ["Kolkata", "Delhi", "Punjab", "Bengal"], correctAnswer: 1},
+    {question: "GST stands for", choices: ["Global State Tomato", "Goods and Service Tax", "Great State Terminal", "GST"], correctAnswer: 1},
+    
+    ];
+
+//array length
+var len = allQuestions.length;
+    
+//track current question
+var pos = 0
+
+//track score
+var totalScore = 0;
+ 
+//grab elements
+var question = document.getElementById("ques");
+var submitButton = document.getElementById("nextbutton");
+var firstDiv = document.getElementById("intern_container");
+    
+//make question
+function createQuestion() {
+    var currentQuestion = allQuestions[pos].question; 
+    question.innerHTML = currentQuestion;
+}
+
+//make choices
+function createChoices() {
+    for(var i = 0; i < 4; i++) {
+        var choice = document.getElementsByTagName("p")[i];
+        var option = "<input id='ans_" + i + "' type='radio' name='choice' value='" + i + "'";
+        
+        if ( i == allQuestions[pos].userAnswer ) {
+            option += " checked='checked'";   
+        }
+        option +=  ">" + allQuestions[pos].choices[i] 
+               + "</input>";
+        
+        choice.innerHTML = option;
+    }
+}
+
+function collectUserAnswer() {
+	allQuestions[pos].userAnswer = document.querySelector('input[name="choice"]:checked').value; 
+}
+
+//calculate total score
+function calcScore() {
+	var score = 0;
+	for ( var i = 0; i < allQuestions.length; i++ ) {
+		if ( allQuestions[i].userAnswer == allQuestions[i].correctAnswer ) {
+			score++;
+		}
+	}
+	this.totalScore = score;
+}
+
+//alert user if no selection is made
+function displayAlert() {
+     var radios = document.getElementsByTagName("input");
+     if(!radios[0].checked && !radios[1].checked && !radios[2].checked && !radios[3].checked) {
+         alert("Please select an option");
+    }
+}
+
+
+function updateNavigationButtons() {
+    if(pos < len) {
+        createQuestion();
+        createChoices();
+        submitButton.innerHTML = '<input id="next" type="button" class="btn btn-info" name="nextbutton" value="Next Question" onclick="updateNext();"> <input id="back" type="button" name="backbutton" value="Previous Question" class="btn btn-info" onclick="updatePrevious();">';
+        
+    }
+    if(pos == len-1) {
+        submitButton.innerHTML = '<input id="submit" type="button" class="btn btn-info" name="submitbutton" value="Submit Quiz" onclick="updateNext();"> <input id="back" type="button" name="backbutton" value="Previous Question" class="btn btn-info" onclick="updatePrevious();">';
+    }
+    if(pos == len) {
+        while(firstDiv.hasChildNodes()) {
+            firstDiv.removeChild(firstDiv.lastChild);
+        }
+        submitButton.innerHTML = ""; 
+            alert("Your score: "+this.totalScore);
+
+    }
+}
+
+
+//update when user clicks next question
+function updateNext() {
+    displayAlert();  
+    collectUserAnswer();
+    calcScore();
+    pos++;
+    updateNavigationButtons();
+};
+
+//update when user clicks previous question
+function updatePrevious() {
+    if(pos > 0) {
+        pos--;
+        createQuestion();
+        createChoices();
+        updateNavigationButtons();
+    }
+}
+
+
+//initialize first set of question and choices
+window.onload = createQuestion();
+window.onload = createChoices();
+
+var myVar = setInterval(function() {
+  myTimer()
+}, 1000);
+var d = 0;
+
+function myTimer() {
+  document.getElementById("timer").innerHTML = d++;
+}
+</script>
+    </body>
